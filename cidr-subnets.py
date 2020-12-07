@@ -27,11 +27,15 @@ def main(argv):
     subnet_split = 0
     if len(argv) == 3:
         subnet_split = int(argv[2])
-    subnets = list(net.subnets(subnet_split))
-
-    for subnet in subnets:
-        print ("net %s : broadcast %s : hosts %s" % (subnet.exploded, subnet.broadcast_address, subnet.num_addresses))
-    print("%s subnets" % int(len(subnets)))
+    if subnet_split < 0:
+        supernet = net.supernet(prefixlen_diff=-subnet_split)
+        print ("\tsupernet %s:\tbroadcast %s :\t%s hosts" % 
+            (supernet.exploded, supernet.broadcast_address, supernet.num_addresses))
+    else:
+        networks = list(net.subnets(subnet_split))
+        print(">>> %s networks, %s hosts/subnet" % (int(len(networks)), networks[0].num_addresses))
+        for subnet in networks:
+            print ("\tnet %s:\tbroadcast %s" % (subnet.exploded, subnet.broadcast_address))
 
 if __name__ == '__main__':
     main (sys.argv)
